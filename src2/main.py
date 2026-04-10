@@ -1,9 +1,15 @@
 import argparse
-from PIL import Image as img
+from PIL import Image
 import os
 import re
 
-pattern = re.compile(r"^[0-9]+_[0-9]+.png$")
+# Debug print
+def dprint(msg):
+    print(msg)
+    # pass
+
+PATTERN = re.compile(r"^[0-9]+_[0-9]+.png$")
+MARGIN: int = 2
 
 def main():
     parser = argparse.ArgumentParser()
@@ -16,26 +22,99 @@ def main():
     args = parser.parse_args()
     args.func()
 
+
 def make():
     print("Making the sprite sheet!")
     paths: list[str] = get_image_paths()
     print(paths)
     check_paths(paths)
+    check_dimensions(paths)
+
+    # Actually build the sprite sheet
+
+    columns = len( [ i for i in paths if i.startswith("1_") ] )
+    total_files = len(paths)
+    rows = total_files // columns
+
+    dprint(f"{columns=}, {rows=}, {total_files=}")
+
+    # Add padding to avoid texture bleeding
+    # Double to account for centering
+    first_img = Image.open(paths[0])
+    padded_img_size: tuple[int, int] = tuple(
+        map(lambda x, y: x + y,
+            first_img.size, (MARGIN*2, MARGIN*2)
+        )
+    )
+    dprint(f"{padded_img_size=}")
+
+    canvas_img_size = (padded_img_size[0] * columns, padded_img_size[1] * rows)
+    dprint(f"{canvas_img_size=}")
+    final_image = Image.new(
+        "RGBA",
+        canvas_img_size
+    )
+
+    # We don't need to sort the path list.
+    # We can determine the insert point coordinates based on
+    # frame numbers.
+    # row 1, col 1 => x = 0, y = 0
+    # row 1, col 2 => x = frame width, y = 0
+    # row 2, col 1 => x = 0, y = frame height
+    # row 2, col 2 => x = frame width, y = frame height
+    # row 3, col 1 => x = 0, y = frame height * 2
+    # ...
+
+    for img_path in paths:
+        row = int(img_path.split("_")[0])
+        col = int(img_path.split("_")[1].split(".")[0])
+
+        dprint(f"{img_path=} : {row=}, {col=}")
+
+        insert_point: tuple[int, int] = (
+            (col - 1) * padded_img_size[0] + MARGIN,
+            (row - 1) * padded_img_size[1] + MARGIN
+        )
+
+        dprint(f"{insert_point=}")
+
+        final_image.paste(
+            Image.open(img_path),
+            insert_point
+        )
+
+    final_image.save("python_sprite_sheet.png")
+
+
+def check_dimensions(img_paths: list[str]):
+    # We assume path check was run and paths are correct.
+    img_paths.sort()
+    imgs: list[Image.Image] = [
+        Image.open(img_path) for img_path in img_paths
+    ]
+    for img in imgs:
+        if img.size != imgs[0].size: # Again, first image is our ref
+            raise RuntimeError(
+               f"Dimension of \"{img}\" ({img.size[0]}×{img.size[1]}) don't match those of first frame."
+           )
 
 def check_paths(img_paths: list[str]):
     row_number = 1
 
-    # Only for declaration. A value will be put later.
-    max_columns = None
+    # Only for declaration. A proper value will be put later.
+    max_columns = 0
 
     while True:
+        dprint(f"Checking paths for row {row_number}")
         # Check that the row exists
         col_count = 0
         for path in img_paths:
             if path.startswith(f"{row_number}_"):
                 col_count += 1
         if col_count == 0:
-            # This happens both if a row was skipped or if it was the last one.
+            # This happens both if a row was skipped or if it was the last one
+
+            dprint(f"No columns for row {row_number}")
 
             err_msg = f"Row number {row_number} wasn't found!"
 
@@ -82,10 +161,13 @@ def check_paths(img_paths: list[str]):
                     f"Column count mismatch with 1st row for row number {row_number}"
                 )
 
+        # If all's good, check next row
+        row_number += 1
+
 def get_image_paths() -> list[str]:
     paths: list[str] = []
     for filename in os.listdir("."):
-        if os.path.isfile(filename) and pattern.match(filename):
+        if os.path.isfile(filename) and PATTERN.match(filename):
             paths.append(filename)
     return paths
 
