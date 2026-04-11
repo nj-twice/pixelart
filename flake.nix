@@ -24,6 +24,7 @@
         ty
         ruff
         my-python-with-pkgs
+        love
       ];
       shellHook = ''
         export PYTHONPATH=${my-python-with-pkgs}/${my-python-with-pkgs.sitePackages}
