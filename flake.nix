@@ -25,6 +25,7 @@
         ruff
         my-python-with-pkgs
         love
+        lua-language-server
       ];
       shellHook = ''
         export PYTHONPATH=${my-python-with-pkgs}/${my-python-with-pkgs.sitePackages}
