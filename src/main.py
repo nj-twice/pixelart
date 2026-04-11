@@ -2,6 +2,8 @@ import argparse
 from PIL import Image
 import os
 import re
+import subprocess
+from pathlib import Path
 
 # Debug print
 def dprint(msg):
@@ -10,6 +12,7 @@ def dprint(msg):
 
 PATTERN = re.compile(r"^[0-9]+_[0-9]+.png$")
 MARGIN: int = 2
+BASE_DIR = Path(__file__).resolve().parent
 
 def main():
     parser = argparse.ArgumentParser()
@@ -174,6 +177,7 @@ def get_image_paths() -> list[str]:
 def play():
     make()
     print("Playing the animation!")
+    subprocess.run(["love", f"{BASE_DIR}"])
 
 if __name__ == "__main__":
     main()
