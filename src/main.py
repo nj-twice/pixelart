@@ -90,6 +90,10 @@ def make():
 
     final_image.save(SS_FILENAME)
 
+    # Return a string containing metadata for a tile "WIDTH,HEIGHT,MARGIN"
+    metadata = f"{first_img.size[0]},{first_img.size[1]},{MARGIN}"
+    return metadata
+
 
 def check_dimensions(img_paths: list[str]):
     # We assume path check was run and paths are correct.
@@ -177,20 +181,26 @@ def get_image_paths() -> list[str]:
     return paths
 
 def play():
-    make()
+    metadata = make()
     print("Playing the animation!")
     first_run = subprocess.run(["love", f"{BASE_DIR}"], capture_output=True)
     try:
         first_run.check_returncode()
     except subprocess.CalledProcessError as err:
         err_str = str(err.output.decode())
-        copy_path = err_str.split('\n')[2].split(" = ")[1]
+        copy_path = err_str.split('\n')[3].split(" = ")[1]
+        copy_dir = err_str.split('\n')[2].split(" = ")[1]
         dprint(copy_path)
         shutil.copyfile(
             os.path.join(os.getcwd(), SS_FILENAME),
             copy_path
         )
+        with open(os.path.join(copy_dir, "metadata.txt"), "w", encoding="utf-8") as f:
+            f.write(metadata)
         subprocess.run(["love", f"{BASE_DIR}"], capture_output=True) # Second run
+
+        # When done, delete the spritesheet file from Love's save dir, so we always generate new
+        os.remove(copy_path)
 
 
 if __name__ == "__main__":

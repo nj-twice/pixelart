@@ -7,6 +7,7 @@ function love.load()
 
   if not love.filesystem.exists(EXPECTED_FILENAME) then
     love.filesystem.createDirectory("placeholder")
+    print("DIR_NOT_FOUND = " .. SAVE_DIR)
     print("FILE_NOT_FOUND = " .. SAVE_DIR .. "/" .. EXPECTED_FILENAME)
     love.event.quit(1)
   end
