@@ -1,16 +1,15 @@
 function love.load()
-  CWD = love.filesystem.getWorkingDirectory()
+  love.filesystem.setIdentity("nj_pixanim")
+  SAVE_DIR = love.filesystem.getSaveDirectory()
+  print(SAVE_DIR)
+
   EXPECTED_FILENAME = "spritesheet.png"
 
-  local path = CWD .. "/" .. EXPECTED_FILENAME
-  INFO = love.filesystem.exists(CWD)
-
-  print(CWD)
-  print(INFO)
-
-  -- if INFO == nil then
-  --   error("Error while trying to read file: " .. path)
-  -- end
+  if not love.filesystem.exists(EXPECTED_FILENAME) then
+    love.filesystem.createDirectory("placeholder")
+    print("FILE_NOT_FOUND = " .. SAVE_DIR .. "/" .. EXPECTED_FILENAME)
+    love.event.quit(1)
+  end
 
 end
 
@@ -18,8 +17,8 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.print("CWD: " .. CWD, 200, 200, 0, 2, 2)
-  -- love.graphics.print("INFO: " .. INFO, 200, 300, 0, 2, 2)
+  local image = love.graphics.newImage(EXPECTED_FILENAME)
+  love.graphics.draw(image)
 end
 
 function love.keypress(key)

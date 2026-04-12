@@ -3,6 +3,7 @@ from PIL import Image
 import os
 import re
 import subprocess
+import shutil
 from pathlib import Path
 
 # Debug print
@@ -13,6 +14,7 @@ def dprint(msg):
 PATTERN = re.compile(r"^[0-9]+_[0-9]+.png$")
 MARGIN: int = 2
 BASE_DIR = Path(__file__).resolve().parent
+SS_FILENAME = "spritesheet.png"
 
 def main():
     parser = argparse.ArgumentParser()
@@ -86,7 +88,7 @@ def make():
             insert_point
         )
 
-    final_image.save("python_sprite_sheet.png")
+    final_image.save(SS_FILENAME)
 
 
 def check_dimensions(img_paths: list[str]):
@@ -177,7 +179,19 @@ def get_image_paths() -> list[str]:
 def play():
     make()
     print("Playing the animation!")
-    subprocess.run(["love", f"{BASE_DIR}"])
+    first_run = subprocess.run(["love", f"{BASE_DIR}"], capture_output=True)
+    try:
+        first_run.check_returncode()
+    except subprocess.CalledProcessError as err:
+        err_str = str(err.output.decode())
+        copy_path = err_str.split('\n')[2].split(" = ")[1]
+        dprint(copy_path)
+        shutil.copyfile(
+            os.path.join(os.getcwd(), SS_FILENAME),
+            copy_path
+        )
+        subprocess.run(["love", f"{BASE_DIR}"], capture_output=True) # Second run
+
 
 if __name__ == "__main__":
     main()
