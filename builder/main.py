@@ -14,16 +14,13 @@ def dprint(msg):
 PATTERN = re.compile(r"^[0-9]+_[0-9]+.png$")
 MARGIN: int = 2
 BASE_DIR = Path(__file__).resolve().parent
-SS_FILENAME = "spritesheet.png"
 
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="actions")
     parser_make = subparsers.add_parser("make", help = "Build the sprite sheet from the image files in the current directory")
-    parser_play = subparsers.add_parser("play", help = "Build the sprite sheet and start playing the resulting animation in a new window")
 
     parser_make.set_defaults(func=make)
-    parser_play.set_defaults(func=play)
     args = parser.parse_args()
     args.func()
 
@@ -179,28 +176,6 @@ def get_image_paths() -> list[str]:
         if os.path.isfile(filename) and PATTERN.match(filename):
             paths.append(filename)
     return paths
-
-def play():
-    metadata = make()
-    print("Playing the animation!")
-    first_run = subprocess.run(["love", f"{BASE_DIR}"], capture_output=True)
-    try:
-        first_run.check_returncode()
-    except subprocess.CalledProcessError as err:
-        err_str = str(err.output.decode())
-        copy_path = err_str.split('\n')[3].split(" = ")[1]
-        copy_dir = err_str.split('\n')[2].split(" = ")[1]
-        dprint(copy_path)
-        shutil.copyfile(
-            os.path.join(os.getcwd(), SS_FILENAME),
-            copy_path
-        )
-        with open(os.path.join(copy_dir, "metadata.txt"), "w", encoding="utf-8") as f:
-            f.write(metadata)
-        subprocess.run(["love", f"{BASE_DIR}"], capture_output=True) # Second run
-
-        # When done, delete the spritesheet file from Love's save dir, so we always generate new
-        os.remove(copy_path)
 
 
 if __name__ == "__main__":
