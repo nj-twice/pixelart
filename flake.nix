@@ -1,5 +1,5 @@
 {
-  description = "Sprite sheet builder";
+  description = "Pixel art tool";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
