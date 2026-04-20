@@ -28,6 +28,9 @@ function love.keypressed(key)
   if key == "delete" then
     table.remove(Files.loaded)
   end
+  if key == "m" then
+    Ui.show_menu = not(Ui.show_menu)
+  end
   if key == "return" then
     Files.open(Files.selected_idx)
   end
