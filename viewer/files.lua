@@ -12,12 +12,12 @@ self.filter = function()
 end
 
 self.selected_idx = 1
-self.filtered_items = self.filter()
+self.filtered = self.filter()
 self.loaded = {}
 
 
 self.open = function(idx)
-  local filename = self.filtered_items[idx]
+  local filename = self.filtered[idx]
   local image = love.graphics.newImage(filename)
   if #self.loaded ~= 1 then
     table.insert(self.loaded, { name=filename, data=image })

@@ -1,7 +1,7 @@
 local self = {}
 
 local function draw_selection_list()
-  for idx, item in ipairs(Files.filtered_items) do
+  for idx, item in ipairs(Files.filtered) do
     if idx == Files.selected_idx then
       love.graphics.setColor(1,0,0)
       love.graphics.print(item, 100, 40+20*(idx-1), 0, 2, 2)
