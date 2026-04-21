@@ -17,10 +17,17 @@ self.loaded = {}
 
 
 self.open = function(idx)
+  if not Text.commited_input then
+    Ui.input_mode = true
+    return
+  end
+
   local filename = self.filtered[idx]
   local image = love.graphics.newImage(filename)
+  local metadata = Text.commited_input
+  Text.commited_input = nil
   if #self.loaded ~= 1 then
-    table.insert(self.loaded, { name=filename, data=image })
+    table.insert(self.loaded, { name=filename, data=image, meta=metadata })
   else
     print("Unload loaded file first.")
   end

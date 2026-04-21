@@ -7,6 +7,7 @@ function love.load()
 
   Ui = require "ui"
   Files = require "files"
+  Text = require "text"
 end
 
 function love.update(dt)
@@ -15,6 +16,13 @@ end
 
 function love.draw()
   Ui.draw()
+end
+
+function love.textinput(text)
+  local allowed_chars = {",", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+  if Text.is_in_table(text, allowed_chars) then
+    Text.user_input = Text.user_input .. text
+  end
 end
 
 function love.keypressed(key)
@@ -32,6 +40,10 @@ function love.keypressed(key)
     Ui.show_menu = not(Ui.show_menu)
   end
   if key == "return" then
-    Files.open(Files.selected_idx)
+    if Ui.show_menu and not Ui.input_mode then
+      Files.open(Files.selected_idx)
+    elseif Ui.input_mode then
+      Text.commit_input()
+    end
   end
 end
