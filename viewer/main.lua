@@ -44,6 +44,8 @@ function love.keypressed(key)
       Files.open(Files.selected_idx)
     elseif Ui.input_mode then
       Text.commit_input()
+      Ui.input_mode = false
+      Files.open(Files.selected_idx)
     end
   end
 end

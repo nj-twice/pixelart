@@ -1,7 +1,7 @@
 local self = {}
 
 self.user_input = ""
-self.commited_input = nil
+self.committed_input = nil
 
 function self.is_in_table(element, table)
   for _, item in ipairs(table) do
@@ -15,7 +15,7 @@ end
 local function check_input(text)
   -- TODO: check format \d+,\d+,\d+
   -- TODO: check consistency with image size → here we do the math
-  DBG.print("Checking input...")
+  DBG.print("Checking input: " .. text)
   return true
 end
 
@@ -24,6 +24,7 @@ function self.commit_input()
   if success then
     self.committed_input = self.user_input
     self.user_input = ""
+    DBG.print("Input committed: " .. self.committed_input .. " User input reset.")
   else
     error("Wrong input")
   end

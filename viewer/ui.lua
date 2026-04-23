@@ -13,7 +13,7 @@ local function draw_selection_list()
       love.graphics.print(item, 100, 40+20*(idx-1), 0, 2, 2)
     end
   end
-  DBG.print(Files.selected_idx)
+  -- DBG.print(Files.selected_idx)
 end
 
 local function draw_loaded_list()
@@ -35,7 +35,6 @@ local function draw_input()
 end
 
 self.draw = function()
-  draw_loaded_images()
   if self.show_menu then
     draw_selection_list()
     draw_loaded_list()
@@ -43,6 +42,7 @@ self.draw = function()
   if self.input_mode then
     draw_input()
   end
+  draw_loaded_images()
 end
 
 return self

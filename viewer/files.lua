@@ -17,20 +17,21 @@ self.loaded = {}
 
 
 self.open = function(idx)
-  if not Text.commited_input then
+  if #self.loaded >= 1 then
+    print("Unload loaded file first.")
+    return
+  end
+  if not Text.committed_input then
+    DBG.print("There is no committed input. Enabling input mode.")
     Ui.input_mode = true
     return
   end
 
   local filename = self.filtered[idx]
   local image = love.graphics.newImage(filename)
-  local metadata = Text.commited_input
-  Text.commited_input = nil
-  if #self.loaded ~= 1 then
-    table.insert(self.loaded, { name=filename, data=image, meta=metadata })
-  else
-    print("Unload loaded file first.")
-  end
+  local metadata = Text.committed_input
+  Text.committed_input = nil
+  table.insert(self.loaded, { name=filename, data=image, meta=metadata })
 end
 
 
