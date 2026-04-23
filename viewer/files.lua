@@ -21,6 +21,9 @@ self.open = function(idx)
     print("Unload loaded file first.")
     return
   end
+
+  Ui.alpha_override = 0.4
+
   if not Text.committed_input then
     DBG.print("There is no committed input. Enabling input mode.")
     Ui.input_mode = true

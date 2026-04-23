@@ -26,15 +26,17 @@ function love.textinput(text)
 end
 
 function love.keypressed(key)
-  if key == "up" then
-    Files.selected_idx = ((Files.selected_idx - 1) % (#Files.filtered))
-    if Files.selected_idx == 0 then Files.selected_idx = #Files.filtered end
-  elseif key == "down" then
-    Files.selected_idx = ((Files.selected_idx + 1) % (#Files.filtered))
-    if Files.selected_idx == 0 then Files.selected_idx = #Files.filtered end
-  end
-  if key == "delete" then
-    table.remove(Files.loaded)
+  if Ui.show_menu and not Ui.input_mode then
+    if key == "up" then
+      Files.selected_idx = ((Files.selected_idx - 1) % (#Files.filtered))
+      if Files.selected_idx == 0 then Files.selected_idx = #Files.filtered end
+    elseif key == "down" then
+      Files.selected_idx = ((Files.selected_idx + 1) % (#Files.filtered))
+      if Files.selected_idx == 0 then Files.selected_idx = #Files.filtered end
+    end
+    if key == "delete" then
+      table.remove(Files.loaded)
+    end
   end
   if key == "m" then
     Ui.show_menu = not(Ui.show_menu)
@@ -46,6 +48,7 @@ function love.keypressed(key)
       Text.commit_input()
       Ui.input_mode = false
       Files.open(Files.selected_idx)
+      Ui.alpha_override = 1
     end
   end
 end
