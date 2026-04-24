@@ -41,6 +41,11 @@ function love.keypressed(key)
   if key == "m" then
     Ui.state.show_menu = not(Ui.state.show_menu)
   end
+  if Ui.state.input_mode then
+    if key == "backspace" and #Text.user_input > 0 then
+      Text.user_input = string.sub(Text.user_input, 1, #Text.user_input - 1)
+    end
+  end
   if key == "return" then
     if Ui.state.show_menu and not Ui.state.input_mode then
       Files.open(Files.selected_idx)
