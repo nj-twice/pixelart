@@ -1,7 +1,8 @@
 local self = {}
 
-self.show_menu = true
-self.input_mode = false
+self.state = {}
+self.state.show_menu = true
+self.state.input_mode = false
 
 self.alpha_override = 1
 
@@ -44,11 +45,11 @@ end
 
 
 self.draw = function()
-  if self.show_menu then
+  if self.state.show_menu then
     draw_selection_list()
     draw_loaded_list()
   end
-  if self.input_mode then
+  if self.state.input_mode then
     draw_input()
   end
   draw_loaded_images()

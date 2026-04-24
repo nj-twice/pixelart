@@ -26,7 +26,7 @@ function love.textinput(text)
 end
 
 function love.keypressed(key)
-  if Ui.show_menu and not Ui.input_mode then
+  if Ui.state.show_menu and not Ui.state.input_mode then
     if key == "up" then
       Files.selected_idx = ((Files.selected_idx - 1) % (#Files.filtered))
       if Files.selected_idx == 0 then Files.selected_idx = #Files.filtered end
@@ -39,14 +39,14 @@ function love.keypressed(key)
     end
   end
   if key == "m" then
-    Ui.show_menu = not(Ui.show_menu)
+    Ui.state.show_menu = not(Ui.state.show_menu)
   end
   if key == "return" then
-    if Ui.show_menu and not Ui.input_mode then
+    if Ui.state.show_menu and not Ui.state.input_mode then
       Files.open(Files.selected_idx)
-    elseif Ui.input_mode then
+    elseif Ui.state.input_mode then
       Text.commit_input()
-      Ui.input_mode = false
+      Ui.state.input_mode = false
       Files.open(Files.selected_idx)
       Ui.alpha_override = 1
     end

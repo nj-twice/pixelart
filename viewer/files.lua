@@ -26,7 +26,7 @@ self.open = function(idx)
 
   if not Text.committed_input then
     DBG.print("There is no committed input. Enabling input mode.")
-    Ui.input_mode = true
+    Ui.state.input_mode = true
     return
   end
 
