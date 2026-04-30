@@ -8,9 +8,13 @@ function love.load()
   Ui = require "ui"
   Files = require "files"
   Text = require "text"
+  Player = require "player"
 end
 
 function love.update(dt)
+  if #Files.loaded > 0 then
+    Player.update_frame(dt)
+  end
 end
 
 
@@ -26,6 +30,7 @@ function love.textinput(text)
 end
 
 function love.keypressed(key)
+  Player.keypressed(key)
   if Ui.state.show_menu and not Ui.state.input_mode then
     if key == "up" then
       Files.selected_idx = ((Files.selected_idx - 1) % (#Files.filtered))

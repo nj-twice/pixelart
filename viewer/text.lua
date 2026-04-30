@@ -12,14 +12,14 @@ function self.is_in_table(element, table)
   return false
 end
 
-local function parse_input(text)
+function self.parse_metadata_input(text)
   local _, w_end = string.find(text, "%d+")
   local width = string.sub(text, 1, w_end)
   local _, h_end = string.find(text, "%d+", w_end+1)
   local height = string.sub(text, w_end+2, h_end)
   local padding = string.sub(text, h_end+2, #text)
 
-  return width, height, padding
+  return tonumber(width), tonumber(height), tonumber(padding)
 end
 
 local function check_input(text)
@@ -36,7 +36,9 @@ local function check_input(text)
   local filename = Files.filtered[Files.selected_idx]
   local image = love.graphics.newImage(filename)
   local width, height = image:getDimensions()
-  local user_tile_width, user_tile_height, user_tile_pad = parse_input(text)
+  local user_tile_width,
+        user_tile_height,
+        user_tile_pad     = self.parse_metadata_input(text)
 
   DBG.print(
     "User-provided data :: \n"

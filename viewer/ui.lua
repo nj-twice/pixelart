@@ -30,10 +30,22 @@ end
 
 local function draw_loaded_images()
   love.graphics.setColor(1, 1, 1)
-  local transf = love.math.newTransform(1, 1, 0, 5, 5)
-  for _, image in ipairs(Files.loaded) do
-    love.graphics.draw(image.data, transf)
-  end
+
+  local image = Files.loaded[1]
+  local tile_w, tile_h, tile_p = Text.parse_metadata_input(image.meta)
+  local x = tile_p + (tile_w + 2 * tile_p) * (Player.frame_index-1)
+  local quad = love.graphics.newQuad(
+      x,
+      tile_p,
+      tile_w,
+      tile_h,
+      image.data
+    )
+
+  local screen_w, screen_h = love.graphics.getDimensions()
+  local transf = love.math.newTransform(screen_w/2, screen_h/2, 0, 5, 5)
+  love.graphics.draw(image.data, quad, transf)
+
   love.graphics.setColor(1, 1, 1, self.alpha_override)
 end
 
@@ -43,16 +55,28 @@ local function draw_input()
   love.graphics.setColor(1, 1, 1, self.alpha_override)
 end
 
+local function draw_info()
+  love.graphics.setColor(1, 1, 1)
+
+  local _, screen_h = love.graphics.getDimensions()
+  love.graphics.print("Speed factor: " .. Player.speed_factor, 0, screen_h - 30)
+  love.graphics.print("Frame index: " .. Player.frame_index, 200, screen_h - 30)
+
+  love.graphics.setColor(1, 1, 1, self.alpha_override)
+end
 
 self.draw = function()
   if self.state.show_menu then
     draw_selection_list()
     draw_loaded_list()
+    draw_info()
   end
   if self.state.input_mode then
     draw_input()
   end
-  draw_loaded_images()
+  if #Files.loaded > 0 then
+    draw_loaded_images()
+  end
 end
 
 return self
