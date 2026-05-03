@@ -32,18 +32,17 @@ local function draw_loaded_images()
   love.graphics.setColor(1, 1, 1)
 
   local image = Files.loaded[1]
-  local tile_w, tile_h, tile_p = Text.parse_metadata_input(image.meta)
-  local x = tile_p + (tile_w + 2 * tile_p) * (Player.frame_index-1)
+  local tile_w, tile_h, _ = Text.parse_metadata_input(image.meta)
   local quad = love.graphics.newQuad(
-      x,
-      tile_p,
+      Player.frame.x,
+      Player.frame.y,
       tile_w,
       tile_h,
       image.data
     )
 
   local screen_w, screen_h = love.graphics.getDimensions()
-  local transf = love.math.newTransform(screen_w/2, screen_h/2, 0, 5, 5)
+  local transf = love.math.newTransform(screen_w/2, screen_h/2, 0, 10, 10)
   love.graphics.draw(image.data, quad, transf)
 
   love.graphics.setColor(1, 1, 1, self.alpha_override)
@@ -60,7 +59,7 @@ local function draw_info()
 
   local _, screen_h = love.graphics.getDimensions()
   love.graphics.print("Speed factor: " .. Player.speed_factor, 0, screen_h - 30)
-  love.graphics.print("Frame index: " .. Player.frame_index, 200, screen_h - 30)
+  love.graphics.print("Frame index: " .. Player.frame.index, 200, screen_h - 30)
 
   love.graphics.setColor(1, 1, 1, self.alpha_override)
 end
