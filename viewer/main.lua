@@ -1,5 +1,5 @@
 function love.load()
-  love.filesystem.setIdentity("github.nj-twice.pixelart")
+  love.filesystem.setIdentity("github.nj-twice.poorsprite")
   love.graphics.setDefaultFilter("nearest")
 
   DBG = require "dbg"
