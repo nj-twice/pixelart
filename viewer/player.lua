@@ -6,6 +6,8 @@ self.frame.row = 1
 self.frame.col = 1
 local new_frame_index = self.frame.index
 
+self.state = {}
+self.state.pause = false
 
 self.speed_factor = 1
 local speed_increment = 0.5
@@ -45,15 +47,20 @@ function self.update_frame(dt)
   local image = Files.loaded[1]
   local max_frame = get_max_frame(image)
 
-  new_frame_index = new_frame_index + dt * self.speed_factor
-  if new_frame_index > max_frame + 1 then
-    new_frame_index = 1
+  if not self.state.pause then
+    new_frame_index = new_frame_index + dt * self.speed_factor
+    if new_frame_index > max_frame + 1 then
+      new_frame_index = 1
+    end
+    self.frame.index = math.floor(new_frame_index)
+    self.frame.x, self.frame.y = get_current_frame_coords(image)
   end
-  self.frame.index = math.floor(new_frame_index)
-  self.frame.x, self.frame.y = get_current_frame_coords(image)
 end
 
 function self.keypressed(key)
+  if key == "space" then
+    self.state.pause = not self.state.pause
+  end
   if key == "d" then
     self.speed_factor = self.speed_factor + speed_increment
   end
