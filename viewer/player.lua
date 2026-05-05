@@ -8,6 +8,13 @@ local new_frame_index = self.frame.index
 
 self.state = {}
 self.state.pause = false
+self.state.zoom_factor = 5
+self.state.follows_mouse = false
+
+self.colors = {}
+local default_outline_color = { 0, 0, 0, 0 }
+local hover_outline_color = { 0, 1, 0, 0.25 }
+self.colors.outline = default_outline_color
 
 self.speed_factor = 1
 local speed_increment = 0.5
@@ -69,6 +76,114 @@ function self.keypressed(key)
       self.speed_factor = self.speed_factor - speed_increment
     end
   end
+end
+
+local outline_margin = 2
+
+local function get_transf()
+  local screen_w, screen_h = love.graphics.getDimensions()
+  local anchor_x, anchor_y = screen_w/2, screen_h/2
+  local move = love.math.newTransform(
+     anchor_x,
+     anchor_y,
+     0
+   )
+  local scale = love.math.newTransform(
+     0,
+     0,
+     0,
+     self.state.zoom_factor,
+     self.state.zoom_factor
+  )
+
+  return { move=move, scale=scale }
+end
+
+local function draw_loaded_images()
+  love.graphics.setColor(1, 1, 1)
+
+  local image = Files.loaded[1]
+  local tile_w, tile_h, _ = Text.parse_metadata_input(image.meta)
+
+  local transf = get_transf()
+
+  local quad = love.graphics.newQuad(
+      Player.frame.x,
+      Player.frame.y,
+      tile_w,
+      tile_h,
+      image.data
+    )
+
+  love.graphics.applyTransform(transf.move)
+  love.graphics.applyTransform(transf.scale)
+
+  love.graphics.setColor(Player.colors.outline)
+  love.graphics.rectangle(
+    "line",
+     0,
+     0,
+     tile_w,
+     tile_h
+   )
+  love.graphics.setColor(1, 1, 1)
+
+  love.graphics.draw(image.data, quad)
+
+  love.graphics.setColor(1, 1, 1, Ui.alpha_override)
+end
+
+
+function self.draw()
+  if #Files.loaded > 0 then
+    draw_loaded_images()
+  end
+end
+
+
+local min_zoom = 0.25
+
+function self.wheelmoved(x, y)
+  if self.state.zoom_factor + y >= min_zoom then
+    self.state.zoom_factor = self.state.zoom_factor + y
+  end
+end
+
+local function is_point_in_rect(point, rect_origin, rect_size)
+  local x = point[1]
+  local y = point[2]
+
+  return
+    x > rect_origin[1]
+    and x < rect_origin[1] + rect_size[1]
+    and y > rect_origin[2]
+    and y < rect_origin[2] + rect_size[2]
+end
+
+function self.mousemoved(x, y, dx, dy, istouch)
+  if #Files.loaded >= 1 then
+    local transf = get_transf()
+    local move = transf.move
+    local scale = transf.scale
+
+    local image = Files.loaded[1]
+    local tile_w, tile_h, _ = Text.parse_metadata_input(image.meta)
+
+    if is_point_in_rect(
+      { x, y },
+      { move:transformPoint(0, 0) },
+      { scale:transformPoint(tile_w, tile_h)}
+    )
+    then
+      self.colors.outline = hover_outline_color
+    else
+      self.colors.outline = default_outline_color
+    end
+  end
+end
+
+
+function self.mousepressed(x, y, button, istouch, presses)
 end
 
 return self

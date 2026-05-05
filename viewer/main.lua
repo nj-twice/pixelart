@@ -62,3 +62,16 @@ function love.keypressed(key)
     end
   end
 end
+
+
+function love.wheelmoved(x, y)
+  Player.wheelmoved(x, y)
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+  Player.mousepressed(x, y, button, istouch, presses)
+end
+
+function love.mousemoved(x, y, dx, dy, istouch)
+  Player.mousemoved(x, y, dx, dy, istouch)
+end

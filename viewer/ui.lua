@@ -28,26 +28,6 @@ local function draw_loaded_list()
   love.graphics.setColor(1, 1, 1)
 end
 
-local function draw_loaded_images()
-  love.graphics.setColor(1, 1, 1)
-
-  local image = Files.loaded[1]
-  local tile_w, tile_h, _ = Text.parse_metadata_input(image.meta)
-  local quad = love.graphics.newQuad(
-      Player.frame.x,
-      Player.frame.y,
-      tile_w,
-      tile_h,
-      image.data
-    )
-
-  local screen_w, screen_h = love.graphics.getDimensions()
-  local transf = love.math.newTransform(screen_w/2, screen_h/2, 0, 10, 10)
-  love.graphics.draw(image.data, quad, transf)
-
-  love.graphics.setColor(1, 1, 1, self.alpha_override)
-end
-
 local function draw_input()
   love.graphics.setColor(1, 1, 1)
   love.graphics.print(Text.user_input, 200, 200, 0, 3, 3)
@@ -73,9 +53,7 @@ self.draw = function()
   if self.state.input_mode then
     draw_input()
   end
-  if #Files.loaded > 0 then
-    draw_loaded_images()
-  end
+  Player.draw()
 end
 
 return self
