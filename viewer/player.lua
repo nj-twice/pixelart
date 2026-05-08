@@ -11,10 +11,15 @@ self.state.pause = false
 self.state.zoom_factor = 5
 self.state.follows_mouse = false
 
+local screen_w, screen_h = love.graphics.getDimensions()
+local anchor_x, anchor_y = screen_w/2, screen_h/2
+self.pos = {anchor_x, anchor_y}
+
 self.colors = {}
 local default_outline_color = { 0, 0, 0, 0 }
-local hover_outline_color = { 0, 1, 0, 0.25 }
+local hover_outline_color = { 0, 1, 0, 0.1 }
 self.colors.outline = default_outline_color
+local selection_margin = 10
 
 self.speed_factor = 1
 local speed_increment = 0.5
@@ -81,11 +86,9 @@ end
 local outline_margin = 2
 
 local function get_transf()
-  local screen_w, screen_h = love.graphics.getDimensions()
-  local anchor_x, anchor_y = screen_w/2, screen_h/2
   local move = love.math.newTransform(
-     anchor_x,
-     anchor_y,
+     self.pos[1],
+     self.pos[2],
      0
    )
   local scale = love.math.newTransform(
@@ -179,11 +182,29 @@ function self.mousemoved(x, y, dx, dy, istouch)
     else
       self.colors.outline = default_outline_color
     end
+    if self.state.follows_mouse then
+      self.pos[1] = x - selection_margin
+      self.pos[2] = y - selection_margin
+    end
   end
 end
 
 
 function self.mousepressed(x, y, button, istouch, presses)
+  local transf = get_transf()
+  local move = transf.move
+  local scale = transf.scale
+
+  local image = Files.loaded[1]
+  local tile_w, tile_h, _ = Text.parse_metadata_input(image.meta)
+  if is_point_in_rect(
+    { x, y },
+    { move:transformPoint(0, 0) },
+    { scale:transformPoint(tile_w, tile_h)}
+  )
+  then
+    self.state.follows_mouse = not self.state.follows_mouse
+  end
 end
 
 return self
