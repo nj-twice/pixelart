@@ -39,7 +39,7 @@ local function draw_info()
 
   local _, screen_h = love.graphics.getDimensions()
   love.graphics.print("Speed factor: " .. Player.speed_factor, 0, screen_h - 30)
-  love.graphics.print("Frame index: " .. Player.frame.index, 200, screen_h - 30)
+  love.graphics.print("Frame index: " .. Player.frame.index .. "/" .. Player.frames_count, 200, screen_h - 30)
 
   love.graphics.setColor(1, 1, 1, self.alpha_override)
 end

@@ -5,6 +5,7 @@ self.frame.index = 1
 self.frame.row = 1
 self.frame.col = 1
 local new_frame_index = self.frame.index
+self.frames_count = 0
 
 self.state = {}
 self.state.pause = false
@@ -58,6 +59,7 @@ end
 function self.update_frame(dt)
   local image = Files.loaded[1]
   local max_frame = get_max_frame(image)
+  self.frames_count = max_frame
 
   if not self.state.pause then
     new_frame_index = new_frame_index + dt * self.speed_factor
